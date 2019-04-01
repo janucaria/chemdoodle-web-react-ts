@@ -41,7 +41,9 @@ class App extends Component<Props, State> {
     navIndexValue: 0,
     contexts: {
       molecule: null,
-      canvas3d: null
+      canvas3d: null,
+      resizeCanvas3d: true,
+      resizeCanvasSketcher: true
     }
   };
 
@@ -62,7 +64,16 @@ class App extends Component<Props, State> {
     this.setState((oldState) => {
       let newState = Object.create(oldState);
       newState.contexts.canvas3d = canvas;
+      newState.contexts.resizeCanvas3d = false;
 
+      return newState;
+    });
+  }
+
+  resizeCanvasSketcherToFalse = () => {
+    this.setState((oldState) => {
+      let newState = Object.create(oldState);
+      newState.contexts.resizeCanvas3d = true;
       return newState;
     });
   }
@@ -78,7 +89,8 @@ class App extends Component<Props, State> {
             {(() => {
               switch (navIndexValue) {
                 case 0:
-                  return <Draw resetMolecule={this.setMolecule} />;
+                  return <Draw resetMolecule={this.setMolecule}
+                          resizeCanvasSketcherToFalse={this.resizeCanvasSketcherToFalse} />;
                 default:
                   return <View3D setContextCanvas3d={this.setContextCanvas3d} />
               }

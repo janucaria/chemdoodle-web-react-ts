@@ -34,27 +34,52 @@ interface State {
 class View3D extends Component<Props, State> {
   static contextType = MoleculeContext;
 
+  updateDimensions = (event?: UIEvent) => {
+    const canvas3d = this.context.canvas3d.gl.canvas as HTMLCanvasElement;
+    const canvasContainer = canvas3d.parentElement as HTMLElement;
+
+    canvasContainer.removeChild(canvas3d);
+
+    const canvasWidth = canvasContainer.clientWidth;
+    const canvasHeight = canvasContainer.clientHeight;
+
+    canvasContainer.appendChild(canvas3d);
+
+    this.context.canvas3d.resize(canvasWidth, canvasHeight);
+  }
+
   componentDidMount() {
     const canvasView3D = this.refs.canvas as HTMLCanvasElement;
     const canvasContainer = canvasView3D.parentElement as HTMLElement;
-    if(this.context.canvas3d === null) {
+    const canvasWidth = canvasContainer.clientWidth;
+    const canvasHeight = canvasContainer.clientHeight;
+    if (this.context.canvas3d === null) {
       const canvasId = canvasView3D.id;
-      const canvasWidth = canvasContainer.clientWidth;
-      const canvasHeight = canvasContainer.clientHeight;
-  
+
       const transformer3d = new ChemDoodle.TransformCanvas3D(canvasId, canvasWidth, canvasHeight);
       transformer3d.specs.set3DRepresentation('Ball and Stick');
       transformer3d.specs.backgroundColor = 'black';
       transformer3d.specs.atoms_displayLabels_3D = true;
       transformer3d.loadMolecule(this.context.molecule);
       transformer3d.repaint();
-  
+
       this.props.setContextCanvas3d(transformer3d);
     } else {
       canvasContainer.replaceChild(this.context.canvas3d.gl.canvas, canvasView3D);
+
+      if (this.context.resizeCanvas3d) {
+        this.context.canvas3d.resize(canvasWidth, canvasHeight);
+        this.props.setContextCanvas3d(this.context.canvas3d);
+      }
+
       this.context.canvas3d.loadMolecule(this.context.molecule);
       this.context.canvas3d.repaint();
     }
+    window.addEventListener("resize", this.updateDimensions);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener("resize", this.updateDimensions);
   }
 
   render() {

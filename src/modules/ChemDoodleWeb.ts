@@ -83,6 +83,7 @@ declare namespace ChemDoodle {
     getAllPoints(): any[];
     getMolecule(): any;
     loadMolecule(mol: any): void;
+    resize(width: number, height: number): void;
   }
 
   namespace uis {

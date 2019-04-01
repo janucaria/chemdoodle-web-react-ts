@@ -27,6 +27,7 @@ const styles = (theme: Theme) =>
 
 interface Props extends WithStyles<typeof styles> {
   resetMolecule(mol: any): void;
+  resizeCanvasSketcherToFalse(): void;
 }
 
 interface State {
@@ -184,6 +185,22 @@ class Draw extends Component<Props, State> {
     this.props.resetMolecule(sketcher.getMolecule());
   }
 
+  updateDimensions = (event: UIEvent) => {
+    const canvasSketcher = this.refs.canvas as HTMLCanvasElement;
+    const canvasContainer = canvasSketcher.parentElement as HTMLElement;
+    
+    canvasContainer.removeChild(canvasSketcher);
+
+    const canvasWidth = canvasContainer.clientWidth;
+    const canvasHeight = canvasContainer.clientHeight;
+
+    canvasContainer.appendChild(canvasSketcher);
+
+    this.sketcher!.resize(canvasWidth, canvasHeight);
+
+    this.props.resizeCanvasSketcherToFalse();
+  }
+
   getUiStateCssClass(buttonIndex: number) {
     return this.state.bottonIndexActive === buttonIndex ? " ui-state-active" : " ui-state-default"
   }
@@ -218,6 +235,12 @@ class Draw extends Component<Props, State> {
 
     const button = this.buttons[this.state.bottonIndexActive];
     button.setSketcerState(this.sketcher);
+
+    window.addEventListener("resize", this.updateDimensions);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener("resize", this.updateDimensions);
   }
 
   render() {
