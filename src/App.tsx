@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { createStyles, Theme, withStyles, WithStyles } from '@material-ui/core/styles';
 import { BottomNavigation, BottomNavigationAction } from "@material-ui/core";
-import { ThreeDRotation, Create, ShowChart, Exposure } from '@material-ui/icons';
+import { ThreeDRotation, Create, ShowChart, LibraryBooks} from '@material-ui/icons';
 import Draw from './components/Draw';
 import View3D from './components/View3D';
 import MoleculeContext, { MoleculeContextInterface } from './contexts/MoleculeContext';
@@ -105,8 +105,8 @@ class App extends Component<Props, State> {
         >
           <BottomNavigationAction label="Draw" icon={<Create />} />
           <BottomNavigationAction label="3D" icon={<ThreeDRotation />} />
-          <BottomNavigationAction label="Calculator" icon={<Exposure />} />
           <BottomNavigationAction label="Spectre" icon={<ShowChart />} />
+          <BottomNavigationAction label="About" icon={<LibraryBooks />} />
         </BottomNavigation>
       </React.Fragment>
     );
