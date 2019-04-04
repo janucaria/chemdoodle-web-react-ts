@@ -21,6 +21,8 @@ declare namespace ChemDoodle {
 
   function readMOL(arg: string, arg2?: number): any;
 
+  function readJCAMP(arg: any): any;
+
   namespace structures {
     var Bond: any;
     var Point: any;
@@ -44,6 +46,24 @@ declare namespace ChemDoodle {
     loadMolecule(mol: any): void;
 
     repaint(): void;
+
+    resize(width: number, height: number): void;
+  }
+
+  class PerspectiveCanvas {
+    emptyMessage: string;
+    specs: {
+      plots_showYAxis: boolean;
+      plots_flipXAxis: boolean;
+      plots_color: string;
+      text_font_size: number;
+      text_font_families: string[];
+      plots_showIntegration: boolean;
+    }
+
+    constructor(element: string, width: number, height: number);
+
+    loadSpectrum(spectrum: any): void;
 
     resize(width: number, height: number): void;
   }

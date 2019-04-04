@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
 import { createStyles, Theme, withStyles, WithStyles } from '@material-ui/core/styles';
 import { BottomNavigation, BottomNavigationAction } from "@material-ui/core";
-import { ThreeDRotation, Create, ShowChart, LibraryBooks} from '@material-ui/icons';
+import { ThreeDRotation, Create, ShowChart, LibraryBooks } from '@material-ui/icons';
 import Draw from './components/Draw';
 import View3D from './components/View3D';
+import Spectre from './components/Spectre';
+import About from './components/About';
 import MoleculeContext, { MoleculeContextInterface } from './contexts/MoleculeContext';
 import ChemDoodle from './modules/ChemDoodleWeb';
 
@@ -90,9 +92,13 @@ class App extends Component<Props, State> {
               switch (navIndexValue) {
                 case 0:
                   return <Draw resetMolecule={this.setMolecule}
-                          resizeCanvasSketcherToFalse={this.resizeCanvasSketcherToFalse} />;
-                default:
+                    resizeCanvasSketcherToFalse={this.resizeCanvasSketcherToFalse} />;
+                case 1:
                   return <View3D setContextCanvas3d={this.setContextCanvas3d} />
+                case 2:
+                  return <Spectre resizeCanvasSketcherToFalse={this.resizeCanvasSketcherToFalse} />
+                default:
+                  return <About resizeCanvasSketcherToFalse={this.resizeCanvasSketcherToFalse} />
               }
             })()}
           </MoleculeContext.Provider>
