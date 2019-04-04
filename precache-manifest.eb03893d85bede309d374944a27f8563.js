@@ -16,7 +16,7 @@ self.__precacheManifest = [
     "url": "/chemdoodle-web-react-ts/static/js/2.fc717401.chunk.js"
   },
   {
-    "revision": "6310cbb154fb00362bc65f4d7d33a5aa",
+    "revision": "be42a6ccf46b7553e870bbac7e4f23fe",
     "url": "/chemdoodle-web-react-ts/index.html"
   }
 ];
