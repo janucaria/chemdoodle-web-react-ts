@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "/chemdoodle-web-react-ts/precache-manifest.67199b643f169ca04369b1799298cc90.js"
+  "/chemdoodle-web-react-ts/precache-manifest.e63b1e27aa752d32fe4b1edd5e67f6aa.js"
 );
 
 workbox.clientsClaim();

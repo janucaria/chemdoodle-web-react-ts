@@ -1,11 +1,11 @@
 self.__precacheManifest = [
   {
-    "revision": "0bd8cbb3ab9584ab08de",
+    "revision": "4afbc050b3c0a246e270",
     "url": "/chemdoodle-web-react-ts/static/css/main.b2fe3bac.chunk.css"
   },
   {
-    "revision": "0bd8cbb3ab9584ab08de",
-    "url": "/chemdoodle-web-react-ts/static/js/main.4f2a9a87.chunk.js"
+    "revision": "4afbc050b3c0a246e270",
+    "url": "/chemdoodle-web-react-ts/static/js/main.42f1f0d0.chunk.js"
   },
   {
     "revision": "c397ec27bef18b881b15",
@@ -16,7 +16,7 @@ self.__precacheManifest = [
     "url": "/chemdoodle-web-react-ts/static/js/2.fc717401.chunk.js"
   },
   {
-    "revision": "9987294d382573cd1879fe35e2a29952",
+    "revision": "1a0b3393dce4f1b428af6365ada98b1d",
     "url": "/chemdoodle-web-react-ts/index.html"
   }
 ];
