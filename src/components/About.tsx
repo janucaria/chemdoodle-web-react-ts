@@ -38,7 +38,7 @@ class About extends Component<Props, State> {
     return (
       <Paper className={classes.aboutPaper} elevation={1}>
         <p>This app just for demo building UI for <a target="_blank" href="https://web.chemdoodle.com/">Chemdoodle Web Component</a> with <a target="_blank" href="https://reactjs.org/">React JS</a> and <a target="_blank" href="https://material-ui.com/">Material-UI</a></p>
-        <p>This app basically not working because it not access the IChemLabs services server for related molecule data.<i></i></p>
+        <p>This app basically not working because it not access the <a target="_blank" href="https://web.chemdoodle.com/docs/ichemlabs-cloud-services/">iChemLabs Cloud Services</a> for related molecule data.<i></i></p>
         <p>The source code can found in <a target="_blank" href="https://github.com/janucaria/chemdoodle-web-react-ts">https://github.com/janucaria/chemdoodle-web-react-ts</a></p>
       </Paper>
     )
