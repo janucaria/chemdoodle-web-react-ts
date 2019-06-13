@@ -1,11 +1,11 @@
-import React, { Component } from 'react';
-import { createStyles, Theme, withStyles, WithStyles } from '@material-ui/core/styles';
+import React, { useState, useEffect, useContext, useRef } from 'react';
+import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { Paper } from "@material-ui/core";
 import ChemDoodle from '../modules/ChemDoodleWeb';
 import MoleculeContext from '../contexts/MoleculeContext';
 
 
-const styles = (theme: Theme) =>
+const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       // width: 500,
@@ -23,27 +23,64 @@ const styles = (theme: Theme) =>
     bottomNav: {
       backgroundColor: "#ddd",
     }
-  });
+  }));
 
-interface Props extends WithStyles<typeof styles> {
+interface Props {
   resetMolecule(mol: any): void;
   resizeCanvasSketcherToFalse(): void;
 }
 
-interface State {
-  bottonIndexActive: number;
-}
+export default function Draw(props: Props): JSX.Element {
+  const context = useContext(MoleculeContext);
 
-class Draw extends Component<Props, State> {
-  static contextType = MoleculeContext;
+  const classes = useStyles();
 
-  state = {
-    bottonIndexActive: 4,
-  };
+  const [bottonIndexActive, setBottonIndexActive] = useState(4);
 
-  sketcher: ChemDoodle.SketcherCanvas | null = null;
+  const canvasEl = useRef(null as HTMLCanvasElement | null);
 
-  buttons = [
+  const sketcherRef = useRef(null as ChemDoodle.SketcherCanvas | null);
+
+  useEffect(() => {
+    const canvasSketcher = canvasEl.current as HTMLCanvasElement;
+    const canvasContainer = canvasSketcher.parentElement as HTMLElement;
+    const canvasId = canvasSketcher.id;
+    const canvasWidth = canvasContainer.clientWidth;
+    const canvasHeight = canvasContainer.clientHeight;
+
+    ChemDoodle.ELEMENT['H'].jmolColor = 'black';
+    ChemDoodle.ELEMENT['S'].jmolColor = '#B9A130';
+    const sketcher = new ChemDoodle.SketcherCanvas(canvasId, canvasWidth, canvasHeight, {
+      useServices: false,
+      oneMolecule: true,
+      isMobile: true,
+      includeToolbar: false
+    });
+    sketcher.specs.atoms_displayTerminalCarbonLabels_2D = true;
+    sketcher.specs.atoms_useJMOLColors = true;
+    sketcher.specs.bonds_clearOverlaps_2D = true;
+
+    if (context.molecule === null) {
+      props.resetMolecule(sketcher.getMolecule());
+    } else {
+      sketcher.loadMolecule(context.molecule);
+    }
+
+    sketcher.repaint();
+
+    const button = buttons[bottonIndexActive];
+    button.setSketcerState(sketcher);
+
+    sketcherRef.current = sketcher;
+
+    window.addEventListener("resize", updateDimensions);
+
+    return () => window.removeEventListener("resize", updateDimensions);
+
+    // eslint-disable-next-line
+  }, []);
+
+  const buttons = [
     {
       title: "Move",
       image: ChemDoodle.uis.gui.imageDepot.getURI(ChemDoodle.uis.gui.imageDepot.MOVE),
@@ -168,27 +205,25 @@ class Draw extends Component<Props, State> {
     }
   ];
 
-  onButtonClick = (e: any) => {
+  const onButtonClick = (e: any) => {
     const target = e.currentTarget;
     const buttonIndex = parseInt(target.dataset.buttonIndex, 10);
-    const button = this.buttons[buttonIndex];
-    const sketcher = this.sketcher!;
+    const button = buttons[buttonIndex];
+    const sketcher = sketcherRef.current!;
 
     if (button.toggle) {
-      this.setState({
-        bottonIndexActive: buttonIndex
-      });
+      setBottonIndexActive(buttonIndex);
     }
 
-    button.setSketcerState(sketcher);
+    button.setSketcerState(sketcher!);
 
-    this.props.resetMolecule(sketcher.getMolecule());
+    props.resetMolecule(sketcher!.getMolecule());
   }
 
-  updateDimensions = (event: UIEvent) => {
-    const canvasSketcher = this.refs.canvas as HTMLCanvasElement;
+  const updateDimensions = (event: UIEvent) => {
+    const canvasSketcher = canvasEl.current as HTMLCanvasElement;
     const canvasContainer = canvasSketcher.parentElement as HTMLElement;
-    
+
     canvasContainer.removeChild(canvasSketcher);
 
     const canvasWidth = canvasContainer.clientWidth;
@@ -196,89 +231,45 @@ class Draw extends Component<Props, State> {
 
     canvasContainer.appendChild(canvasSketcher);
 
-    this.sketcher!.resize(canvasWidth, canvasHeight);
+    sketcherRef.current!.resize(canvasWidth, canvasHeight);
 
-    this.props.resizeCanvasSketcherToFalse();
+    props.resizeCanvasSketcherToFalse();
   }
 
-  getUiStateCssClass(buttonIndex: number) {
-    return this.state.bottonIndexActive === buttonIndex ? " ui-state-active" : " ui-state-default"
+  function getUiStateCssClass(buttonIndex: number): string {
+    return bottonIndexActive === buttonIndex ? " ui-state-active" : " ui-state-default"
   }
 
-  componentDidMount() {
-    const canvasSketcher = this.refs.canvas as HTMLCanvasElement;
-    const canvasContainer = canvasSketcher.parentElement as HTMLElement;
-    const canvasId = canvasSketcher.id;
-    const canvasWidth = canvasContainer.clientWidth;
-    const canvasHeight = canvasContainer.clientHeight;
-
-    ChemDoodle.ELEMENT['H'].jmolColor = 'black';
-    ChemDoodle.ELEMENT['S'].jmolColor = '#B9A130';
-    var sketcher = new ChemDoodle.SketcherCanvas(canvasId, canvasWidth, canvasHeight, {
-      useServices: false,
-      oneMolecule: true,
-      isMobile: true,
-      includeToolbar: false
-    });
-    sketcher.specs.atoms_displayTerminalCarbonLabels_2D = true;
-    sketcher.specs.atoms_useJMOLColors = true;
-    sketcher.specs.bonds_clearOverlaps_2D = true;
-
-    if(this.context.molecule === null) {
-      this.props.resetMolecule(sketcher.getMolecule());
-    } else {
-      sketcher.loadMolecule(this.context.molecule);
-    }
-
-    sketcher.repaint();
-    this.sketcher = sketcher;
-
-    const button = this.buttons[this.state.bottonIndexActive];
-    button.setSketcerState(this.sketcher);
-
-    window.addEventListener("resize", this.updateDimensions);
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener("resize", this.updateDimensions);
-  }
-
-  render() {
-    const { classes } = this.props;
-    return (
-      <Paper id="paper-sketcher" className={classes.sketchPaper} elevation={1}>
-        <div className={classes.sketchToolbar}>
-          {this.buttons.map((button, key) => {
-            return (<span
-              key={key}
-              data-button-index={key}
-              id="sketcher_button_move_label"
-              title={button.title}
-              onClick={this.onButtonClick}
-              className={
-                "ui-button ui-widget ui-corner-all ui-button-text-only"
-                + this.getUiStateCssClass(key)
-              }
-              role="button" aria-pressed="false">
-              <span className="ui-button-text">
-                <img
-                  alt={button.title.toLowerCase()}
-                  id="sketcher_button_move_icon"
-                  title={button.title}
-                  width="20" height="20"
-                  src={button.image} />
-              </span>
+  return (
+    <Paper id="paper-sketcher" className={classes.sketchPaper} elevation={1}>
+      <div className={classes.sketchToolbar}>
+        {buttons.map((button, key) => {
+          return (<span
+            key={key}
+            data-button-index={key}
+            id="sketcher_button_move_label"
+            title={button.title}
+            onClick={onButtonClick}
+            className={
+              "ui-button ui-widget ui-corner-all ui-button-text-only"
+              + getUiStateCssClass(key)
+            }
+            role="button" aria-pressed="false">
+            <span className="ui-button-text">
+              <img
+                alt={button.title.toLowerCase()}
+                id="sketcher_button_move_icon"
+                title={button.title}
+                width="20" height="20"
+                src={button.image} />
             </span>
-            )
-          })}
-        </div>
-        <div className="strect-height">
-          <canvas ref="canvas" id="canvas-sketcher"></canvas>
-        </div>
-      </Paper>
-    )
-  }
+          </span>
+          )
+        })}
+      </div>
+      <div className="strect-height">
+        <canvas ref={canvasEl} id="canvas-sketcher"></canvas>
+      </div>
+    </Paper>
+  )
 }
-
-
-export default withStyles(styles)(Draw);

@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
-import { createStyles, Theme, withStyles, WithStyles } from '@material-ui/core/styles';
+import React, { useEffect } from 'react';
+import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { Paper } from "@material-ui/core";
 
-const styles = (theme: Theme) =>
+const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     aboutPaper: {
       display: "flex",
@@ -10,40 +10,32 @@ const styles = (theme: Theme) =>
       flex: "1 1 auto",
       padding: "10px"
     }
-  });
+  }));
 
-interface Props extends WithStyles<typeof styles> {
+interface Props {
   resizeCanvasSketcherToFalse(): void;
 }
 
-interface State {
+export default function About(props: Props): JSX.Element {
+  const classes = useStyles();
+  useEffect(() => {
+    window.addEventListener("resize", updateDimensions);
+    return () => {
+      window.removeEventListener("resize", updateDimensions);
+    }
+
+    // eslint-disable-next-line
+  }, []);
+
+  function updateDimensions(event: UIEvent) {
+    props.resizeCanvasSketcherToFalse();
+  }
+
+  return (
+    <Paper className={classes.aboutPaper} elevation={1}>
+      <p>This app just for demo building UI for <a target="_blank" rel="noopener noreferrer" href="https://web.chemdoodle.com/">Chemdoodle Web Component</a> with <a target="_blank" rel="noopener noreferrer" href="https://reactjs.org/">React JS</a> and <a target="_blank" rel="noopener noreferrer" href="https://material-ui.com/">Material-UI</a></p>
+      <p>This app basically not working because it not access the <a target="_blank" rel="noopener noreferrer" href="https://web.chemdoodle.com/docs/ichemlabs-cloud-services/">iChemLabs Cloud Services</a> for related molecule data.<i></i></p>
+      <p>The source code can found in <a target="_blank" rel="noopener noreferrer" href="https://github.com/janucaria/chemdoodle-web-react-ts">https://github.com/janucaria/chemdoodle-web-react-ts</a></p>
+    </Paper>
+  )
 }
-
-class About extends Component<Props, State> {
-
-  updateDimensions = (event: UIEvent) => {
-    this.props.resizeCanvasSketcherToFalse();
-  }
-
-  componentDidMount() {
-    window.addEventListener("resize", this.updateDimensions);
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener("resize", this.updateDimensions);
-  }
-
-  render() {
-    const { classes } = this.props;
-    return (
-      <Paper className={classes.aboutPaper} elevation={1}>
-        <p>This app just for demo building UI for <a target="_blank" rel="noopener noreferrer" href="https://web.chemdoodle.com/">Chemdoodle Web Component</a> with <a target="_blank" rel="noopener noreferrer" href="https://reactjs.org/">React JS</a> and <a target="_blank" rel="noopener noreferrer" href="https://material-ui.com/">Material-UI</a></p>
-        <p>This app basically not working because it not access the <a target="_blank" rel="noopener noreferrer" href="https://web.chemdoodle.com/docs/ichemlabs-cloud-services/">iChemLabs Cloud Services</a> for related molecule data.<i></i></p>
-        <p>The source code can found in <a target="_blank" rel="noopener noreferrer" href="https://github.com/janucaria/chemdoodle-web-react-ts">https://github.com/janucaria/chemdoodle-web-react-ts</a></p>
-      </Paper>
-    )
-  }
-}
-
-
-export default withStyles(styles)(About);
