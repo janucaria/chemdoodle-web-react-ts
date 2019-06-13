@@ -1,3 +1,4 @@
+/* eslint-disable */
 declare namespace ChemDoodle {
   namespace io {
     class PDBInterpreter {
